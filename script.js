@@ -27,6 +27,7 @@ app.get('/info', (req, res) => {
   const host = forwardedFor ? forwardedFor.split(',')[0] : req.ip;
   const port = forwardedPort || req.get('host').split(':')[1] || 'default port';
   res.send(`Forwarded host: ${host}:${port}`);
+  console.log(`Forwarded host: ${host}:${port}`);
 });
 
 const PORT = process.env.PORT || 3000;
