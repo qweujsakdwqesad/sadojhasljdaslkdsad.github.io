@@ -22,8 +22,11 @@ app.get('/reset', (req, res) => {
 
 // Get forwarded host (IP address and port)
 app.get('/info', (req, res) => {
-  const host = req.get('host');
-  res.send(`Forwarded host: ${host}`);
+  const forwardedFor = req.get('X-Forwarded-For');
+  const forwardedPort = req.get('X-Forwarded-Port');
+  const host = forwardedFor ? forwardedFor.split(',')[0] : req.ip;
+  const port = forwardedPort || req.get('host').split(':')[1] || 'default port';
+  res.send(`Forwarded host: ${host}:${port}`);
 });
 
 const PORT = process.env.PORT || 3000;
