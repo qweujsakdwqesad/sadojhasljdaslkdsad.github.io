@@ -22,15 +22,24 @@ app.get('/reset', (req, res) => {
 
 // Get forwarded host (IP address and port)
 app.get('/info', (req, res) => {
-  const forwardedFor = req.get('X-Forwarded-For');
-  const forwardedPort = req.get('X-Forwarded-Port');
-  const host = forwardedFor ? forwardedFor.split(',')[0] : req.ip;
-  const port = forwardedPort || req.get('host').split(':')[1] || 'default port';
-  res.send(`Forwarded host: ${host}:${port}`);
-  console.log(`Forwarded host: ${host}:${port}`);
+  const forwardedFor = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+  const forwardedHost = req.headers['x-forwarded-host'] || req.headers.host;
+  const forwardedPort = req.headers['x-forwarded-port'] || forwardedHost.split(':')[1] || 'default port';
+  
+  console.log(`Forwarded IP: ${forwardedFor}`);
+  console.log(`Forwarded Host: ${forwardedHost}`);
+  console.log(`Forwarded Port: ${forwardedPort}`);
+  
+  res.send(`Forwarded host: ${forwardedFor}:${forwardedPort}`);
 });
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
+  const forwardedFor = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+  const forwardedHost = req.headers['x-forwarded-host'] || req.headers.host;
+  const forwardedPort = req.headers['x-forwarded-port'] || forwardedHost.split(':')[1] || 'default port';
   console.log(`Server is running on port ${PORT}`);
+
+  console.log(`Forwarded Host: ${forwardedHost}`);
+  console.log(`Forwarded Port: ${forwardedPort}`);
 });
