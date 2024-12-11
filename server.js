@@ -1,41 +1,28 @@
 const express = require('express');
-const cors = require('cors');
 const app = express();
 
-// Allow requests from your GitHub Pages domain
-const corsOptions = {
-  origin: 'https://qweujsakdwqesad.github.io',
-  optionsSuccessStatus: 200
-};
-
-app.use(cors(corsOptions));
+// Middleware to set CORS headers for all origins
+app.use((req, res, next) => {
+  res.header('Access-Control-Allow-Origin', '*'); // Allow all origins
+  res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS'); // Allow specific HTTP methods
+  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization'); // Allow specific headers
+  next();
+});
 
 let jonConfirmed = false;
 
 app.get('/api/confirm', (req, res) => {
   jonConfirmed = true;
-  res.send('Jon has confirmed access!');
+  res.json({ message: 'Jon has confirmed access!', jonConfirmed: true });
 });
 
 app.get('/api/check', (req, res) => {
-  res.send(jonConfirmed.toString());
+  res.json({ jonConfirmed });
 });
 
 app.get('/api/reset', (req, res) => {
   jonConfirmed = false;
-  res.send('Jon confirmation has been reset!');
-});
-
-app.get('/api/info', (req, res) => {
-  const forwardedFor = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
-  const forwardedHost = req.headers['x-forwarded-host'] || req.headers.host;
-  const forwardedPort = req.headers['x-forwarded-port'] || forwardedHost.split(':')[1] || 'default port';
-  
-  console.log(`Forwarded IP: ${forwardedFor}`);
-  console.log(`Forwarded Host: ${forwardedHost}`);
-  console.log(`Forwarded Port: ${forwardedPort}`);
-  
-  res.send(`Forwarded host: ${forwardedFor}:${forwardedPort}`);
+  res.json({ message: 'Jon confirmation has been reset!' });
 });
 
 const PORT = process.env.PORT || 3001;
