@@ -7,13 +7,13 @@ const supabase = createClient(supabaseUrl, supabaseKey);
 
 // Function to add a user
 async function addUser() {
-  const USERNAME = readlineSync.question('Enter username: ');
-  const PASSWORD = readlineSync.question('Enter password: ', { hideEchoBack: true });
+  const username = readlineSync.question('Enter username: ');
+  const password = readlineSync.question('Enter password: ', { hideEchoBack: true });
   const device_id = readlineSync.question('Enter device ID (optional): ') || '';
 
   const { data, error } = await supabase
     .from('users')
-    .insert([{ USERNAME, PASSWORD, device_id }]);
+    .insert([{ username, password, device_id }]);
 
   if (error) {
     console.error('Error adding user:', error.message);
@@ -24,7 +24,7 @@ async function addUser() {
 
 // Function to remove a user
 async function removeUser() {
-  const id = readlineSync.question('Enter user ID to remove: ');
+  const id = readlineSync.questionInt('Enter user ID to remove: ');
 
   const { data, error } = await supabase
     .from('users')
@@ -40,13 +40,13 @@ async function removeUser() {
 
 // Function to add a banned user
 async function addBannedUser() {
-  const USERNAME = readlineSync.question('Enter username: ');
-  const PASSWORD = readlineSync.question('Enter password: ', { hideEchoBack: true });
+  const username = readlineSync.question('Enter username: ');
+  const password = readlineSync.question('Enter password: ', { hideEchoBack: true });
   const device_id = readlineSync.question('Enter device ID (optional): ') || '';
 
   const { data, error } = await supabase
     .from('banned_users')
-    .insert([{ USERNAME, PASSWORD, device_id }]);
+    .insert([{ username, password, device_id }]);
 
   if (error) {
     console.error('Error adding banned user:', error.message);
@@ -57,7 +57,7 @@ async function addBannedUser() {
 
 // Function to remove a banned user
 async function removeBannedUser() {
-  const id = readlineSync.question('Enter banned user ID to remove: ');
+  const id = readlineSync.questionInt('Enter banned user ID to remove: ');
 
   const { data, error } = await supabase
     .from('banned_users')
@@ -71,13 +71,39 @@ async function removeBannedUser() {
   }
 }
 
+// Function to show all device IDs with associated usernames in users and banned_users tables
+async function showAllDeviceIds() {
+  const { data: usersData, error: usersError } = await supabase
+    .from('users')
+    .select('id, username, device_id');
+
+  const { data: bannedData, error: bannedError } = await supabase
+    .from('banned_users')
+    .select('id, username, device_id');
+
+  if (usersError) {
+    console.error('Error fetching device IDs from users table:', usersError.message);
+  } else {
+    console.log('Device IDs in users table:');
+    usersData.forEach(user => console.log(`ID: ${user.id}, Username: ${user.username}, Device ID: ${user.device_id}`));
+  }
+
+  if (bannedError) {
+    console.error('Error fetching device IDs from banned_users table:', bannedError.message);
+  } else {
+    console.log('Device IDs in banned_users table:');
+    bannedData.forEach(user => console.log(`ID: ${user.id}, Username: ${user.username}, Device ID: ${user.device_id}`));
+  }
+}
+
 async function mainMenu() {
   console.log('Welcome to the User Management Console');
   console.log('1. Add user');
   console.log('2. Remove user');
   console.log('3. Add banned user');
   console.log('4. Remove banned user');
-  console.log('5. Exit');
+  console.log('5. Show all device IDs with usernames');
+  console.log('6. Exit');
 
   const choice = readlineSync.question('Enter your choice: ');
 
@@ -95,6 +121,9 @@ async function mainMenu() {
       await removeBannedUser();
       break;
     case '5':
+      await showAllDeviceIds();
+      break;
+    case '6':
       console.log('Exiting...');
       process.exit(0);
     default:
