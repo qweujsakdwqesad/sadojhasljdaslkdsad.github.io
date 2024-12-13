@@ -4,7 +4,7 @@
   "scripts": {
     "dev": "concurrently \"npm run vite --host\" \"npm run server\"",
     "vite": "vite",
-    "server": "node server.js",
+    "server": "node test.js",
     "build": "vite build",
     "serve": "vite preview"
   },

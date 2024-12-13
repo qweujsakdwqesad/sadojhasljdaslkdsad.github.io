@@ -7,7 +7,7 @@ export default defineConfig({
   server: {
     proxy: {
       '/api': {
-        target: 'http://localhost:1111', // The port where your Node.js server is running
+        target: 'http://localhost:5000', // The port where your Node.js server is running
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api/, '')
       }
