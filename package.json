@@ -2,8 +2,8 @@
   "name": "my-vite-app",
   "version": "0.0.1",
   "scripts": {
-    "dev": "concurrently \"npm run vite --host\" \"npm run server\"",
-    "vite": "vite",
+    "dev": "concurrently \"npm run vite -- --host\" \"npm run server\"",
+    "vite": "vite -- --host",
     "server": "node test.js",
     "build": "vite build",
     "serve": "vite preview"
